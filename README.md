@@ -24,7 +24,7 @@ before any public distribution.
 ```yaml
 type: custom:nightsky-card
 hour: 22              # which hour tonight to render (24h, default 22)
-height: 320px          # card height, default 320px
+height: min(75vh, 800px)   # any CSS size; responsive by default, capped at 800px
 magnitude: 5           # faintest star magnitude to show, default 5
 projection: stereo   # polar | stereo | lambert | equirectangular | ortho (default: stereo)
 show_constellation_lines: true

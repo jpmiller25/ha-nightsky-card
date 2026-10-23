@@ -12,6 +12,7 @@
 <body>
   <h3>nightsky-card smoke test (fake hass, no real HA instance)</h3>
   <p>Card is nested inside two layers of shadow DOM, like the real HA frontend, so this catches the shadow-boundary selector bug a flat test page would miss.</p>
+  <button id="resize-btn">Toggle width (tests ResizeObserver)</button>
   <div id="shadow-host-outer"></div>
 
   <script type="module">
@@ -32,7 +33,13 @@
     card.style.maxWidth = '600px';
     innerRoot.appendChild(card);
 
-    card.setConfig({ hour: 22, height: '320px' });
+    let wide = false;
+    document.getElementById('resize-btn').addEventListener('click', () => {
+      wide = !wide;
+      card.style.maxWidth = wide ? '1100px' : '600px';
+    });
+
+    card.setConfig({ hour: 22 }); // uses the responsive default height
     // Fake a minimal hass object with zone.home, like HA would provide.
     card.hass = {
       states: {

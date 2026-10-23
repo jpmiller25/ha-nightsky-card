@@ -88,7 +88,7 @@ function ensureLibsLoaded() {
 const DEFAULT_CONFIG = {
   hour: 22,
   magnitude: 5,
-  height: '320px',
+  height: 'min(75vh, 800px)',
   projection: 'stereo',
   show_constellation_lines: true,
   show_constellation_labels: true,
@@ -180,6 +180,33 @@ class NightSkyCard extends HTMLElement {
     });
 
     this._wireToggles();
+    this._wireResize();
+  }
+
+  // The container's CSS size (height defaults to a responsive clamp, see
+  // DEFAULT_CONFIG) can change after creation - window resize, sidebar
+  // toggle, dashboard layout settling, etc. VirtualSky only sizes its canvas
+  // once at creation, so without this the canvas stays whatever size it
+  // happened to be born at while the CSS box around it changes shape.
+  // sky.resize() with no args re-reads the container's current rendered
+  // size itself (stuQuery's outerWidth/outerHeight), so just needing to
+  // call it is enough - no manual width/height tracking here.
+  _wireResize() {
+    let pending = false;
+    const observer = new ResizeObserver(() => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => {
+        pending = false;
+        if (this._sky) this._sky.resize();
+      });
+    });
+    observer.observe(this._container);
+    this._resizeObserver = observer;
+  }
+
+  disconnectedCallback() {
+    if (this._resizeObserver) this._resizeObserver.disconnect();
   }
 
   _wireToggles() {
