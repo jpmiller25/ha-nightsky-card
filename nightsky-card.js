@@ -88,7 +88,9 @@ function ensureLibsLoaded() {
 const DEFAULT_CONFIG = {
   hour: 22,
   magnitude: 5,
-  height: 'min(75vh, 800px)',
+  max_width: '1400px',
+  aspect_ratio: '16 / 9',
+  max_height: '800px',
   projection: 'stereo',
   az: 0, // 0 = facing north, 90 = east, 180 = south, 270 = west
   show_constellation_lines: true,
@@ -122,10 +124,11 @@ class NightSkyCard extends HTMLElement {
     if (this._built) return;
     this._built = true;
     this._uid = 'nightsky-' + Math.random().toString(36).slice(2);
+    const cfg = this._config || DEFAULT_CONFIG;
     this.innerHTML = `
       <ha-card>
-        <div style="position:relative;">
-          <div id="${this._uid}" style="width:100%;height:${(this._config || DEFAULT_CONFIG).height};"></div>
+        <div style="position:relative;width:min(100%, ${cfg.max_width});aspect-ratio:${cfg.aspect_ratio};max-height:${cfg.max_height};margin:0 auto;">
+          <div id="${this._uid}" style="width:100%;height:100%;"></div>
           <div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;">
             <button id="${this._uid}-lines" style="font-size:11px;">Lines</button>
             <button id="${this._uid}-labels" style="font-size:11px;">Labels</button>
