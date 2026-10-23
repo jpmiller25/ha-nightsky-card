@@ -14,7 +14,7 @@
 // didn't help either - confirmed directly). A commit-pinned URL has no such
 // problem since that content genuinely never changes. Bump this hash to the
 // new commit any time vendor/ changes.
-const VENDOR_COMMIT = '34c8d23';
+const VENDOR_COMMIT = 'bf4696b';
 const VENDOR_BASE = new URL(`https://cdn.jsdelivr.net/gh/jpmiller25/ha-nightsky-card@${VENDOR_COMMIT}/vendor/`);
 function vendorUrl(path) {
   return new URL(path, VENDOR_BASE).href;
