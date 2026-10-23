@@ -89,9 +89,9 @@ const DEFAULT_CONFIG = {
   hour: 22,
   magnitude: 5,
   title: 'Night Sky',
-  max_width: '1400px',
+  max_width: '1100px',
   aspect_ratio: '16 / 9',
-  max_height: '800px',
+  max_height: '620px',
   projection: 'stereo',
   az: 0, // 0 = facing north, 90 = east, 180 = south, 270 = west
   show_constellation_lines: false,
@@ -132,11 +132,19 @@ class NightSkyCard extends HTMLElement {
     // filling the leftover space below our bounded aspect-ratio content.
     // Override at this level too, not just on ha-card below, since the
     // stretch could apply here first.
-    this.style.cssText = 'display:block;height:auto!important;align-self:flex-start;';
+    //
+    // min-width:0 matters too: this element is a flex item in that same
+    // panel-view row, and flex items default to min-width:auto, meaning
+    // they won't shrink below their content's intrinsic width - here, the
+    // canvas VirtualSky creates, which can be born wider than the eventual
+    // CSS-constrained layout (e.g. under browser zoom). Without min-width:0
+    // the percentage-based width:min(100%, max_width) below never gets a
+    // chance to apply, and the whole view scrolls horizontally instead.
+    this.style.cssText = 'display:block;min-width:0;height:auto!important;align-self:flex-start;';
     this.innerHTML = `
-      <ha-card header="${cfg.title}" style="overflow:hidden;width:min(100%, ${cfg.max_width});margin:0 auto;height:auto!important;align-self:flex-start;--ha-card-border-radius:12px;--ha-card-box-shadow:0px 2px 8px rgba(0,0,0,0.3);">
+      <ha-card header="${cfg.title}" style="overflow:hidden;width:min(100%, ${cfg.max_width});min-width:0;margin:0 auto;height:auto!important;align-self:flex-start;--ha-card-border-radius:12px;--ha-card-box-shadow:0px 2px 8px rgba(0,0,0,0.3);">
         <div style="position:relative;width:100%;aspect-ratio:${cfg.aspect_ratio};max-height:${cfg.max_height};">
-          <div id="${this._uid}" style="width:100%;height:100%;"></div>
+          <div id="${this._uid}" style="width:100%;height:100%;overflow:hidden;"></div>
           <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:10px;">
             <button id="${this._uid}-lines" style="font-size:22px;padding:8px 16px;">Lines</button>
             <button id="${this._uid}-labels" style="font-size:22px;padding:8px 16px;">Labels</button>

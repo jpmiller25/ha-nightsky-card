@@ -25,9 +25,9 @@ before any public distribution.
 type: custom:nightsky-card
 title: Night Sky       # card header text (default "Night Sky")
 hour: 22              # which hour tonight to render (24h, default 22)
-max_width: 1400px      # card never grows wider than this (default 1400px)
+max_width: 1100px      # card never grows wider than this (default 1100px)
 aspect_ratio: 16 / 9    # width:height ratio the card is held to (default 16/9)
-max_height: 800px      # card never grows taller than this, even if aspect_ratio would call for it (default 800px)
+max_height: 620px      # card never grows taller than this, even if aspect_ratio would call for it (default 620px)
 magnitude: 5           # faintest star magnitude to show, default 5
 projection: stereo   # polar | stereo | lambert | equirectangular | ortho (default: stereo)
 az: 0                  # initial facing: 0 = north, 90 = east, 180 = south, 270 = west (default: 0)
