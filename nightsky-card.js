@@ -134,7 +134,7 @@ class NightSkyCard extends HTMLElement {
     // stretch could apply here first.
     this.style.cssText = 'display:block;height:auto!important;align-self:flex-start;';
     this.innerHTML = `
-      <ha-card header="${cfg.title}" style="overflow:hidden;width:min(100%, ${cfg.max_width});margin:0 auto;height:auto!important;align-self:flex-start;">
+      <ha-card header="${cfg.title}" style="overflow:hidden;width:min(100%, ${cfg.max_width});margin:0 auto;height:auto!important;align-self:flex-start;--ha-card-border-radius:12px;--ha-card-box-shadow:0px 2px 8px rgba(0,0,0,0.3);">
         <div style="position:relative;width:100%;aspect-ratio:${cfg.aspect_ratio};max-height:${cfg.max_height};">
           <div id="${this._uid}" style="width:100%;height:100%;"></div>
           <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:10px;">
