@@ -126,8 +126,15 @@ class NightSkyCard extends HTMLElement {
     this._built = true;
     this._uid = 'nightsky-' + Math.random().toString(36).slice(2);
     const cfg = this._config || DEFAULT_CONFIG;
+    // A panel-type dashboard view stretches its single direct child (this
+    // element) to fill the view's full height via flex/height rules, which
+    // otherwise leaves ha-card stretched tall with its own background
+    // filling the leftover space below our bounded aspect-ratio content.
+    // Override at this level too, not just on ha-card below, since the
+    // stretch could apply here first.
+    this.style.cssText = 'display:block;height:auto!important;align-self:flex-start;';
     this.innerHTML = `
-      <ha-card header="${cfg.title}" style="overflow:hidden;width:min(100%, ${cfg.max_width});margin:0 auto;">
+      <ha-card header="${cfg.title}" style="overflow:hidden;width:min(100%, ${cfg.max_width});margin:0 auto;height:auto!important;align-self:flex-start;">
         <div style="position:relative;width:100%;aspect-ratio:${cfg.aspect_ratio};max-height:${cfg.max_height};">
           <div id="${this._uid}" style="width:100%;height:100%;"></div>
           <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:10px;">
