@@ -6,7 +6,18 @@
 // hacs.json (this file) onto the HA host - it does not pull the rest of the
 // repo. So vendor/ assets are loaded from jsDelivr instead, which serves
 // files straight from this repo's GitHub source.
+//
+// jsDelivr (and browsers) cache @main heavily by URL, so every vendor file
+// carries a manually-bumped ?v= cache-buster below - bump VENDOR_VERSION
+// whenever anything under vendor/ changes, or updates silently won't reach
+// already-loaded dashboards.
+const VENDOR_VERSION = '3';
 const VENDOR_BASE = new URL('https://cdn.jsdelivr.net/gh/jpmiller25/ha-nightsky-card@main/vendor/');
+function vendorUrl(path) {
+  const u = new URL(path, VENDOR_BASE);
+  u.searchParams.set('v', VENDOR_VERSION);
+  return u.href;
+}
 
 let libsPromise = null;
 
@@ -66,9 +77,9 @@ window.__nightskyDeepGetElementById = deepGetElementById;
 // already exist, so it must load first.
 function ensureLibsLoaded() {
   if (!libsPromise) {
-    libsPromise = loadScript(new URL('stuquery.js', VENDOR_BASE).href)
+    libsPromise = loadScript(vendorUrl('stuquery.js'))
       .then(() => patchStuQueryForShadowDom())
-      .then(() => loadScript(new URL('virtualsky.js', VENDOR_BASE).href));
+      .then(() => loadScript(vendorUrl('virtualsky.js')));
   }
   return libsPromise;
 }
