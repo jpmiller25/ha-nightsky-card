@@ -94,8 +94,8 @@ const DEFAULT_CONFIG = {
   max_height: '800px',
   projection: 'stereo',
   az: 0, // 0 = facing north, 90 = east, 180 = south, 270 = west
-  show_constellation_lines: true,
-  show_constellation_labels: true,
+  show_constellation_lines: false,
+  show_constellation_labels: false,
   show_constellation_boundaries: false,
   show_planet_labels: true,
   show_star_labels: false,
@@ -194,6 +194,16 @@ class NightSkyCard extends HTMLElement {
 
     this._wireToggles();
     this._wireResize();
+    this._hideHelpButton();
+  }
+
+  // VirtualSky always draws its own "?" help button (top-right, opens a
+  // keyboard-shortcuts popup) - not configurable off. We disable keyboard
+  // controls entirely (touchscreen card), so that popup would just show an
+  // empty list. Hide the button rather than leave a dead control on screen.
+  _hideHelpButton() {
+    const btn = this._container.querySelector('.virtualskybutton');
+    if (btn) btn.style.display = 'none';
   }
 
   // The container's CSS size (height defaults to a responsive clamp, see

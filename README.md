@@ -31,8 +31,8 @@ max_height: 800px      # card never grows taller than this, even if aspect_ratio
 magnitude: 5           # faintest star magnitude to show, default 5
 projection: stereo   # polar | stereo | lambert | equirectangular | ortho (default: stereo)
 az: 0                  # initial facing: 0 = north, 90 = east, 180 = south, 270 = west (default: 0)
-show_constellation_lines: true
-show_constellation_labels: true
+show_constellation_lines: false   # default off; toggle live with the Lines button
+show_constellation_labels: false  # default off; toggle live with the Labels button
 show_constellation_boundaries: false
 show_planet_labels: true
 show_star_labels: false
