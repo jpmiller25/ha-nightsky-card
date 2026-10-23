@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>nightsky-card smoke test</title>
+  <style>
+    body { background: #111; color: #eee; font-family: sans-serif; }
+    ha-card { display: block; background: #1c1c1c; border-radius: 12px; padding: 8px; }
+    button { background: #333; color: #eee; border: 1px solid #555; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h3>nightsky-card smoke test (fake hass, no real HA instance)</h3>
+  <nightsky-card id="card" style="display:block;max-width:600px;"></nightsky-card>
+
+  <script type="module">
+    import './../nightsky-card.js';
+
+    const card = document.getElementById('card');
+    card.setConfig({ hour: 22, height: '320px' });
+    // Fake a minimal hass object with zone.home, like HA would provide.
+    card.hass = {
+      states: {
+        'zone.home': {
+          attributes: {
+            latitude: 29.5844,   // Pearland, TX - matches this household's water/electric data
+            longitude: -95.2860,
+          },
+        },
+      },
+    };
+  </script>
+</body>
+</html>
