@@ -7,16 +7,17 @@
 // repo. So vendor/ assets are loaded from jsDelivr instead, which serves
 // files straight from this repo's GitHub source.
 //
-// jsDelivr (and browsers) cache @main heavily by URL, so every vendor file
-// carries a manually-bumped ?v= cache-buster below - bump VENDOR_VERSION
-// whenever anything under vendor/ changes, or updates silently won't reach
-// already-loaded dashboards.
-const VENDOR_VERSION = '3';
-const VENDOR_BASE = new URL('https://cdn.jsdelivr.net/gh/jpmiller25/ha-nightsky-card@main/vendor/');
+// Pinned to a specific commit, not @main: jsDelivr (and browsers) cache a
+// branch ref as if it were immutable, so updates to vendor/ silently never
+// reached already-loaded dashboards even with a cache-busting query string
+// (jsDelivr's GitHub proxy ignores query strings for its cache key, so that
+// didn't help either - confirmed directly). A commit-pinned URL has no such
+// problem since that content genuinely never changes. Bump this hash to the
+// new commit any time vendor/ changes.
+const VENDOR_COMMIT = '34c8d23';
+const VENDOR_BASE = new URL(`https://cdn.jsdelivr.net/gh/jpmiller25/ha-nightsky-card@${VENDOR_COMMIT}/vendor/`);
 function vendorUrl(path) {
-  const u = new URL(path, VENDOR_BASE);
-  u.searchParams.set('v', VENDOR_VERSION);
-  return u.href;
+  return new URL(path, VENDOR_BASE).href;
 }
 
 let libsPromise = null;
