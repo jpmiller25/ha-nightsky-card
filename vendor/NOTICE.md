@@ -1,8 +1,8 @@
 # Vendored code
 
 This folder contains Stuart Lowe's VirtualSky planetarium library, pulled
-from https://github.com/slowe/VirtualSky (master branch), with one small
-local patch (see below):
+from https://github.com/slowe/VirtualSky (master branch), with two small
+local patches (see below):
 
 - `stuquery.js` - the library's own minimal jQuery-like helper, required by virtualsky.js
 - `virtualsky.js` - the planetarium engine itself
@@ -36,3 +36,11 @@ error). Patched to call `window.__nightskyDeepGetElementById` (defined in
 falling back to the original behavior otherwise, so the file still works
 correctly outside this card's context. Search `virtualsky.js` for
 "nightsky-card patch" to find it.
+
+**Second local patch, in `checkLoaded`:** constellation labels are drawn
+from the same lines data as constellation lines (each entry carries a label
+anchor position alongside its line segments), but upstream only lazy-loads
+that data when `.lines` is toggled on, not `.labels`. Toggling labels on
+first, before lines had ever been toggled on at least once, silently drew
+nothing. Patched the load condition to also trigger on `.labels`. Also
+tagged "nightsky-card patch" in the source.

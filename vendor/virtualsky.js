@@ -1291,7 +1291,13 @@ VirtualSky.prototype.checkLoaded = function(){
 	if(!this.planets && this.showplanets) this.load('planets',this.file.planets);
 
 	// Get the constellation line data
-	if(!this.lines && this.constellation.lines) this.load('lines',this.file.lines);
+	// nightsky-card patch: constellation LABELS are drawn from this same
+	// lines data (each entry carries a label anchor position alongside its
+	// line segments - see drawConstellationLines), but upstream only
+	// triggers this load when .lines is on, not .labels. Toggling labels
+	// on first (lines still off) silently drew nothing until lines was
+	// also toggled at least once. See vendor/NOTICE.md.
+	if(!this.lines && (this.constellation.lines || this.constellation.labels)) this.load('lines',this.file.lines);
 
 	// Get the constellation line data
 	if(!this.boundaries && this.constellation.boundaries) this.load('boundaries',this.file.boundaries);
