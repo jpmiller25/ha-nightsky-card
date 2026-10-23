@@ -11,12 +11,27 @@
 </head>
 <body>
   <h3>nightsky-card smoke test (fake hass, no real HA instance)</h3>
-  <nightsky-card id="card" style="display:block;max-width:600px;"></nightsky-card>
+  <p>Card is nested inside two layers of shadow DOM, like the real HA frontend, so this catches the shadow-boundary selector bug a flat test page would miss.</p>
+  <div id="shadow-host-outer"></div>
 
   <script type="module">
     import './../nightsky-card.js';
 
-    const card = document.getElementById('card');
+    // Simulate HA's nested-shadow-DOM component tree (outer wrapper -> inner
+    // wrapper -> the card), instead of attaching the card directly to the
+    // plain document like a real flat page would.
+    const outerHost = document.getElementById('shadow-host-outer');
+    const outerRoot = outerHost.attachShadow({ mode: 'open' });
+    const innerHost = document.createElement('div');
+    outerRoot.appendChild(innerHost);
+    const innerRoot = innerHost.attachShadow({ mode: 'open' });
+
+    const card = document.createElement('nightsky-card');
+    card.id = 'card';
+    card.style.display = 'block';
+    card.style.maxWidth = '600px';
+    innerRoot.appendChild(card);
+
     card.setConfig({ hour: 22, height: '320px' });
     // Fake a minimal hass object with zone.home, like HA would provide.
     card.hass = {

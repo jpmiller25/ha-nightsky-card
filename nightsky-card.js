@@ -20,13 +20,55 @@ function loadScript(src) {
   });
 }
 
+// stuquery.js's selector lookups (S('#id'), S('.class')) resolve against
+// plain `document`, which cannot see across shadow-DOM boundaries - and the
+// real HA frontend nests everything inside several layers of shadow DOM, so
+// VirtualSky's own container lookup (and every element it creates
+// afterwards) silently finds nothing there. Patch stuQuery's selector
+// resolution to search through shadow roots too, right after stuquery.js
+// loads and before virtualsky.js runs and starts relying on it.
+function deepQuerySelectorAll(selector) {
+  const results = [];
+  const visit = (root) => {
+    results.push(...root.querySelectorAll(selector));
+    root.querySelectorAll('*').forEach((el) => {
+      if (el.shadowRoot) visit(el.shadowRoot);
+    });
+  };
+  visit(document);
+  return results;
+}
+
+function patchStuQueryForShadowDom() {
+  const proto = window.stuQuery.prototype;
+  const original = proto.querySelector;
+  proto.querySelector = function (els, selector) {
+    if (els === document && selector.indexOf(':eq') < 0) {
+      return deepQuerySelectorAll(selector);
+    }
+    return original.call(this, els, selector);
+  };
+}
+
+// virtualsky.js has one raw `document.getElementById` call (for the canvas
+// element it creates) that bypasses the S(...) wrapper entirely, so the
+// patch above doesn't cover it. vendor/virtualsky.js calls this global when
+// present instead - see the comment at its call site.
+function deepGetElementById(id) {
+  const direct = document.getElementById(id);
+  if (direct) return direct;
+  const matches = deepQuerySelectorAll('#' + id);
+  return matches[0] || null;
+}
+window.__nightskyDeepGetElementById = deepGetElementById;
+
 // stuquery.js defines the global `S` namespace that virtualsky.js expects to
 // already exist, so it must load first.
 function ensureLibsLoaded() {
   if (!libsPromise) {
-    libsPromise = loadScript(new URL('stuquery.js', VENDOR_BASE).href).then(() =>
-      loadScript(new URL('virtualsky.js', VENDOR_BASE).href)
-    );
+    libsPromise = loadScript(new URL('stuquery.js', VENDOR_BASE).href)
+      .then(() => patchStuQueryForShadowDom())
+      .then(() => loadScript(new URL('virtualsky.js', VENDOR_BASE).href));
   }
   return libsPromise;
 }

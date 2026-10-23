@@ -1379,7 +1379,12 @@ VirtualSky.prototype.createSky = function(){
 	this.idinner = this.id+'_inner';
 	this.container.html('<canvas id="'+this.idinner+'" style="display:block;"></canvas>');
 	this.canvas = S('#'+this.idinner);
-	this.c = document.getElementById(this.idinner);
+	// nightsky-card patch: raw document.getElementById can't see across
+	// shadow-DOM boundaries (unlike the S(...) lookup above, which
+	// nightsky-card.js patches to search shadow roots) - fall back to a
+	// shadow-aware lookup nightsky-card.js provides when present, otherwise
+	// behave exactly as upstream. See vendor/NOTICE.md.
+	this.c = (window.__nightskyDeepGetElementById ? window.__nightskyDeepGetElementById(this.idinner) : document.getElementById(this.idinner));
 	// For excanvas we need to initialise the newly created <canvas>
 	if(this.excanvas)
 		this.c = G_vmlCanvasManager.initElement(this.c);

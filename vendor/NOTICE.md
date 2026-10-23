@@ -1,7 +1,8 @@
 # Vendored code
 
-This folder contains unmodified copies of Stuart Lowe's VirtualSky planetarium
-library, pulled from https://github.com/slowe/VirtualSky (master branch):
+This folder contains Stuart Lowe's VirtualSky planetarium library, pulled
+from https://github.com/slowe/VirtualSky (master branch), with one small
+local patch (see below):
 
 - `stuquery.js` - the library's own minimal jQuery-like helper, required by virtualsky.js
 - `virtualsky.js` - the planetarium engine itself
@@ -24,3 +25,14 @@ to the HACS default store, or otherwise encouraging strangers to download
 these vendored files through this repo). Before doing that, reach out to
 Stuart Lowe for explicit permission, or swap this vendoring for a
 differently-licensed sky-rendering engine. Don't skip this step.
+
+**Local patch to `virtualsky.js`:** one line, in the canvas-creation code.
+Upstream uses a raw `document.getElementById(this.idinner)` to grab the
+canvas it just created, which can't see across shadow-DOM boundaries - and
+the real HA frontend is built from many nested shadow-DOM web components, so
+this silently failed with the canvas never getting sized (a blank card, no
+error). Patched to call `window.__nightskyDeepGetElementById` (defined in
+`nightsky-card.js`, which searches through shadow roots) when it's present,
+falling back to the original behavior otherwise, so the file still works
+correctly outside this card's context. Search `virtualsky.js` for
+"nightsky-card patch" to find it.
