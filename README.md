@@ -23,6 +23,7 @@ before any public distribution.
 
 ```yaml
 type: custom:nightsky-card
+title: Night Sky       # card header text (default "Night Sky")
 hour: 22              # which hour tonight to render (24h, default 22)
 max_width: 1400px      # card never grows wider than this (default 1400px)
 aspect_ratio: 16 / 9    # width:height ratio the card is held to (default 16/9)
