@@ -1,8 +1,12 @@
 // Night Sky Card - a minimal Home Assistant Lovelace card showing tonight's sky
 // (stars, planets, constellations) for your home location, rendered with the
 // VirtualSky library (vendored under ./vendor - see vendor/NOTICE.md).
-
-const VENDOR_BASE = new URL('./vendor/', import.meta.url);
+//
+// HACS's Lovelace "plugin" install only copies the single file named in
+// hacs.json (this file) onto the HA host - it does not pull the rest of the
+// repo. So vendor/ assets are loaded from jsDelivr instead, which serves
+// files straight from this repo's GitHub source.
+const VENDOR_BASE = new URL('https://cdn.jsdelivr.net/gh/jpmiller25/ha-nightsky-card@main/vendor/');
 
 let libsPromise = null;
 
@@ -86,7 +90,17 @@ class NightSkyCard extends HTMLElement {
   // home coordinates from hass - these three arrive in no particular order.
   _maybeInit() {
     if (this._sky || !this._container || !this._config || !this._latlong) return;
-    ensureLibsLoaded().then(() => this._createSky());
+    ensureLibsLoaded().then(
+      () => this._createSky(),
+      (err) => this._showError(err)
+    );
+  }
+
+  _showError(err) {
+    console.error('nightsky-card:', err);
+    if (this._container) {
+      this._container.innerHTML = `<div style="color:#f88;padding:12px;font-size:13px;">Night Sky Card failed to load: ${err.message || err}</div>`;
+    }
   }
 
   _createSky() {
