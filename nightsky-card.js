@@ -195,6 +195,7 @@ class NightSkyCard extends HTMLElement {
     this._wireToggles();
     this._wireResize();
     this._hideHelpButton();
+    this._disableDoubleClickFullscreen();
   }
 
   // VirtualSky always draws its own "?" help button (top-right, opens a
@@ -204,6 +205,16 @@ class NightSkyCard extends HTMLElement {
   _hideHelpButton() {
     const btn = this._container.querySelector('.virtualskybutton');
     if (btn) btn.style.display = 'none';
+  }
+
+  // VirtualSky also binds a double-click handler that requests browser
+  // fullscreen, with no config option to turn it off. VirtualSky itself
+  // isn't exposed as a global (only the S.virtualsky() factory is), so
+  // reach its prototype through our own instance instead - this affects
+  // every instance sharing that prototype, but there's only ever one.
+  // Double-click still fires internally, it just does nothing now.
+  _disableDoubleClickFullscreen() {
+    Object.getPrototypeOf(this._sky).toggleFullScreen = function () {};
   }
 
   // The container's CSS size (height defaults to a responsive clamp, see
