@@ -27,6 +27,7 @@ hour: 22              # which hour tonight to render (24h, default 22)
 height: min(75vh, 800px)   # any CSS size; responsive by default, capped at 800px
 magnitude: 5           # faintest star magnitude to show, default 5
 projection: stereo   # polar | stereo | lambert | equirectangular | ortho (default: stereo)
+az: 0                  # initial facing: 0 = north, 90 = east, 180 = south, 270 = west (default: 0)
 show_constellation_lines: true
 show_constellation_labels: true
 show_constellation_boundaries: false

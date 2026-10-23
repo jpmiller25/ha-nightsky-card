@@ -90,6 +90,7 @@ const DEFAULT_CONFIG = {
   magnitude: 5,
   height: 'min(75vh, 800px)',
   projection: 'stereo',
+  az: 0, // 0 = facing north, 90 = east, 180 = south, 270 = west
   show_constellation_lines: true,
   show_constellation_labels: true,
   show_constellation_boundaries: false,
@@ -168,6 +169,7 @@ class NightSkyCard extends HTMLElement {
       longitude: this._latlong.longitude,
       clock: tonight,
       live: false,
+      az: this._config.az,
       magnitude: this._config.magnitude,
       constellations: this._config.show_constellation_lines,
       constellationlabels: this._config.show_constellation_labels,
